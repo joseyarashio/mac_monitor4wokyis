@@ -20,7 +20,7 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
-  width: 1280px; height: 720px; overflow: hidden;
+  width: 100%; height: 100%; overflow: hidden;
   background: var(--bg); color: var(--fg);
   font-family: var(--mono); font-variant-numeric: tabular-nums;
   -webkit-user-select: none; user-select: none; cursor: none;
@@ -55,7 +55,7 @@ html, body {
 }
 /* ---------- layout ---------- */
 .app {
-  position: relative; z-index: 1;
+  position: relative; z-index: 1; transform-origin: top left;
   width: 1280px; height: 720px; padding: 14px;
   display: grid; gap: 12px;
   grid-template-rows: 108px 356px 204px;
@@ -335,6 +335,15 @@ const $ = id => document.getElementById(id);
 const FLAGS = Object.fromEntries(location.search.replace(/^\?/, '').split('&').filter(Boolean).map(kv => kv.split('=')).map(([k, v]) => [k, v ?? '1']));
 if (FLAGS.noanim) { const st = document.createElement('style'); st.textContent = '*, *::before, *::after { animation: none !important; transition: none !important; }'; document.head.appendChild(st); }
 const TWEEN_MS = FLAGS.notween ? 0 : 300;
+// Scale the fixed 1280x720 layout to whatever the window gives us (e.g. the
+// screen minus the menu bar), keeping the aspect ratio and centring it.
+function fitToViewport() {
+  const app = document.querySelector('.app'); if (!app) return;
+  const k = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+  const ox = Math.max(0, (window.innerWidth - 1280 * k) / 2), oy = Math.max(0, (window.innerHeight - 720 * k) / 2);
+  app.style.transform = `translate(${ox.toFixed(1)}px, ${oy.toFixed(1)}px) scale(${k.toFixed(4)})`;
+}
+window.addEventListener('resize', fitToViewport); fitToViewport();
 const C = { cyan: '#00F0FF', mag: '#FF2BD6', yel: '#F9F002', red: '#FF3B3B', dim: '#7C6F9B' };
 const HIST = 120;
 const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));

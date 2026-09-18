@@ -5,6 +5,9 @@ struct LaunchOptions {
     var windowed = false
     var screenName: String?
     var keepAwake = false
+    /// true = old behavior: cover the whole screen including the menu bar and float above everything.
+    /// false (default) = sit below all normal windows so other windows can be dragged over it.
+    var overlay = false
     var interval: TimeInterval = 1.0
     var dump = false
 
@@ -17,6 +20,8 @@ struct LaunchOptions {
                 windowed = true
             case "--keep-awake":
                 keepAwake = true
+            case "--overlay":
+                overlay = true
             case "--dump":
                 dump = true
             case "--screen":

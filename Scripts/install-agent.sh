@@ -3,7 +3,11 @@ set -euo pipefail
 
 LABEL="local.wokymon"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Prefer an installed copy in /Applications or ~/Applications; fall back to the local build.
 APP_BIN="$ROOT_DIR/build/WokyMon.app/Contents/MacOS/WokyMon"
+for cand in "/Applications/WokyMon.app/Contents/MacOS/WokyMon" "$HOME/Applications/WokyMon.app/Contents/MacOS/WokyMon"; do
+    if [ -x "$cand" ]; then APP_BIN="$cand"; break; fi
+done
 PLIST_PATH="$HOME/Library/LaunchAgents/${LABEL}.plist"
 LOG_DIR="$HOME/Library/Logs/WokyMon"
 

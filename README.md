@@ -11,11 +11,12 @@ swift build -c release
 ## 執行參數
 
 ```
-.build/release/WokyMon [--windowed] [--screen <name>] [--keep-awake] [--interval <seconds>] [--dump]
+.build/release/WokyMon [--windowed] [--overlay] [--screen <name>] [--keep-awake] [--interval <seconds>] [--dump]
 ```
 
 - `--windowed`:強制在主螢幕開一個 1280x720 的普通視窗(開發/示範用),不釘螢幕。
 - `--screen <name>`:找不到 Wokyis 時,依 `NSScreen.localizedName` 指定備援螢幕。
+- `--overlay`:蓋住整個 Wokyis 螢幕(含選單列),並浮在所有視窗之上,沒有東西能蓋住它。**預設不開**:預設模式視窗壓在所有一般視窗之下、避開選單列,其他視窗可以拖到它上面。
 - `--keep-awake`:阻止顯示器閒置睡眠(`IOPMAssertionCreateWithName`)。預設關閉,因為 macOS 無法只讓單一螢幕不睡,開啟後所有螢幕都會保持常亮,請自行評估。
 - `--interval <seconds>`:採樣間隔,預設 `1.0` 秒。
 - `--dump`:不開視窗,採樣兩次(間隔 `--interval` 秒)後把一筆 Snapshot 印成 JSON 到 stdout 並結束(exit 0)。同時會把資源套件(`ui/index.html`)解析結果印到 stderr,可用來驗證 `Bundle.module` 是否正確找到資源。
@@ -23,6 +24,8 @@ swift build -c release
 沒有指定螢幕時的選擇順序:Wokyis 的 vendor/model(`4691`/`9557`)→ `localizedName == "Wokyis"` → `--screen` 參數 → 都找不到就退回 `--windowed` 的普通視窗。
 
 ## 打包成 .app
+
+`Scripts/make-app.sh --install` 會在打包後把 app 複製到 `/Applications/WokyMon.app`(不可寫時退到 `~/Applications`)。之後可直接從 Launchpad / Finder 啟動,或 `open -a WokyMon`。
 
 ```
 Scripts/make-app.sh

@@ -119,7 +119,7 @@ mockup/
 
 1. 啟動時掃描 `NSScreen.screens`。優先條件:`CGDisplayVendorNumber == 4691 && CGDisplayModelNumber == 9557`。備援條件:`localizedName == "Wokyis"`。再備援:`--screen <name>` 參數。
 2. 都找不到:在主螢幕開一個 1280x720 的普通視窗(方便開發與示範)。
-3. 視窗設定:`styleMask = .borderless`、`frame = screen.frame`、`level = mainMenu + 1`(蓋住該螢幕的選單列)、`collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]`、`hidesOnDeactivate = false`。顯示時呼叫 `orderFrontRegardless()`,不依賴 app 取得焦點。
+3. 視窗設定(預設,可被覆蓋):`styleMask = .borderless`、`frame = screen.visibleFrame`(避開選單列)、`level = normal − 1`(壓在所有一般視窗之下,其他視窗可拖到它上面,點它也不會浮起)。網頁用 `transform: scale` 把 1280x720 版面縮到視窗大小。加 `--overlay` 才回到 `frame = screen.frame`、`level = mainMenu + 1`(蓋住選單列、浮在最上層)、`collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]`、`hidesOnDeactivate = false`。顯示時呼叫 `orderFrontRegardless()`,不依賴 app 取得焦點。
 4. 監聽 `NSApplication.didChangeScreenParametersNotification`。螢幕拔插後重新掃描並重設 frame。
 5. `NSApp.setActivationPolicy(.accessory)`:不出現在 Dock,不搶焦點。
 6. 參數 `--windowed`:強制普通視窗,開發用。

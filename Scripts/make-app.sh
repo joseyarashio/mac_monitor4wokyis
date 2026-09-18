@@ -68,3 +68,12 @@ else
     echo "error: $MACOS_DIR/WokyMon --dump failed (resource bundle lookup likely broken)" >&2
     exit 1
 fi
+
+# --install: copy the bundle into /Applications (or ~/Applications if not writable).
+if [ "${1:-}" = "--install" ]; then
+    DEST="/Applications"
+    if [ ! -w "$DEST" ]; then DEST="$HOME/Applications"; mkdir -p "$DEST"; fi
+    rm -rf "$DEST/WokyMon.app"
+    cp -R "$APP_DIR" "$DEST/WokyMon.app"
+    echo "installed: $DEST/WokyMon.app"
+fi

@@ -36,7 +36,7 @@ final class DashboardWindow: NSObject {
         let pinned: Bool
 
         if let screen = screen, !options.windowed {
-            frame = screen.frame
+            frame = DashboardWindow.pinnedFrame(for: screen, overlay: options.overlay)
             styleMask = [.borderless]
             pinned = true
         } else {
@@ -55,7 +55,14 @@ final class DashboardWindow: NSObject {
         window.hidesOnDeactivate = false
 
         if pinned {
-            window.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.mainMenuWindow)) + 1)
+            if options.overlay {
+                // Above the menu bar; nothing can cover it on that screen.
+                window.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.mainMenuWindow)) + 1)
+            } else {
+                // One step below normal windows: any app window dragged onto the
+                // screen sits above the dashboard, and clicking it never raises it.
+                window.level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.normalWindow)) - 1)
+            }
             window.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary, .ignoresCycle]
         } else {
             window.title = "WokyMon"
@@ -150,7 +157,14 @@ final class DashboardWindow: NSObject {
     private func repinToTargetScreen() {
         guard pinned else { return }
         guard let screen = ScreenPinner.findTargetScreen(options: options) else { return }
-        window.setFrame(screen.frame, display: true)
+        window.setFrame(DashboardWindow.pinnedFrame(for: screen, overlay: options.overlay), display: true)
+    }
+
+    /// Overlay mode covers the full screen (menu bar included). Default mode
+    /// uses visibleFrame so the menu bar stays usable; the page scales itself
+    /// to fit the slightly shorter height.
+    static func pinnedFrame(for screen: NSScreen, overlay: Bool) -> NSRect {
+        overlay ? screen.frame : screen.visibleFrame
     }
 }
 
