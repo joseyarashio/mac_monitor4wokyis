@@ -37,8 +37,7 @@ html, body {
 }
 .bg-scan {
   position: fixed; inset: 0; z-index: 50; pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.22) 0px, rgba(0,0,0,0.22) 1px, transparent 2px, transparent 4px);
-  mix-blend-mode: multiply;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.28) 0px, rgba(0,0,0,0.28) 1px, transparent 2px, transparent 4px);
 }
 .bg-vignette {
   position: fixed; inset: 0; z-index: 51; pointer-events: none;
@@ -47,7 +46,7 @@ html, body {
 .bg-sweep {
   position: fixed; left: 0; right: 0; height: 140px; z-index: 52; pointer-events: none;
   background: linear-gradient(180deg, transparent, rgba(0,240,255,0.10) 45%, rgba(255,43,214,0.10) 55%, transparent);
-  animation: sweep 6s linear infinite;
+  animation: sweep 8s linear infinite;
   will-change: transform;
 }
 @keyframes sweep {
@@ -84,11 +83,11 @@ html, body {
   box-shadow: inset 0 0 0 1px rgba(255,59,59,0.9), inset 0 0 26px rgba(255,59,59,0.28);
 }
 .panel.danger::after {
-  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; pointer-events: none;
+  content: ""; position: absolute; left: -34px; right: 0; top: 0; height: 6px; pointer-events: none;
   background: repeating-linear-gradient(135deg, var(--yel) 0 12px, #000 12px 24px);
-  animation: stripes 1.2s linear infinite;
+  animation: stripes 1.2s linear infinite; will-change: transform;
 }
-@keyframes stripes { from { background-position: 0 0; } to { background-position: 34px 0; } }
+@keyframes stripes { from { transform: translateX(0); } to { transform: translateX(34px); } }
 .corner {
   position: absolute; width: 14px; height: 14px; pointer-events: none;
   border-color: var(--cyan); border-style: solid; opacity: 0.9;
@@ -111,7 +110,7 @@ html, body {
   position: relative; font-size: 88px; font-weight: 700; line-height: 1; letter-spacing: 3px;
   color: var(--cyan); text-shadow: 0 0 14px rgba(0,240,255,0.75), 0 0 32px rgba(0,240,255,0.35);
 }
-.clock .ghost { position: absolute; inset: 0; opacity: 0.38; mix-blend-mode: screen; pointer-events: none; text-shadow: none; }
+.clock .ghost { position: absolute; inset: 0; opacity: 0.38; pointer-events: none; text-shadow: none; }
 .clock .ghost.m { color: var(--mag); transform: translateX(-3px); }
 .clock .ghost.c { color: var(--cyan); transform: translateX(3px); }
 .clock.glitch { animation: glitch 0.22s steps(2, end) 1; }
@@ -126,7 +125,7 @@ html, body {
 @keyframes gshift2 { 0% { transform: translate(12px,-3px); } 50% { transform: translate(-8px,2px); } 100% { transform: translateX(3px); } }
 .clockwrap { display: flex; flex-direction: column; gap: 8px; }
 .minbar { height: 4px; width: 100%; background: rgba(124,111,155,0.25); position: relative; overflow: hidden; }
-.minbar > div { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--mag)); box-shadow: 0 0 10px var(--cyan); }
+.minbar > div { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; transform: scaleX(0); transform-origin: left; will-change: transform; background: linear-gradient(90deg, var(--cyan), var(--mag)); box-shadow: 0 0 10px var(--cyan); transition: transform 1s linear; }
 .date { font-size: 26px; color: var(--fg); line-height: 1.25; letter-spacing: 1px; }
 .date .wd { color: var(--mag); text-shadow: 0 0 8px rgba(255,43,214,0.5); }
 .hdr-right { margin-left: auto; text-align: right; line-height: 1.35; }
@@ -150,7 +149,7 @@ canvas { display: block; }
 .gauge-sub { position: absolute; left: 0; right: 0; bottom: 2px; text-align: center; font-size: 19px; color: var(--dim); letter-spacing: 0.5px; white-space: nowrap; }
 .cores { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; height: 62px; align-items: end; margin-top: 2px; }
 .cores .bar { position: relative; height: 100%; background: rgba(124,111,155,0.15); }
-.cores .bar > i { position: absolute; left: 0; right: 0; bottom: 0; height: 0%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); transition: height 0.3s linear, background 0.3s, box-shadow 0.3s; }
+.cores .bar > i { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; transform: scaleY(0); transform-origin: bottom; will-change: transform; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); transition: transform 0.3s linear, background 0.3s; }
 .cores .bar.p > i { background: var(--mag); box-shadow: 0 0 8px var(--mag); }
 .cores .bar > i.hot { background: var(--red) !important; box-shadow: 0 0 10px var(--red) !important; }
 .cores-legend { display: flex; gap: 16px; font-size: 19px; color: var(--dim); margin-top: 6px; letter-spacing: 1px; white-space: nowrap; }
@@ -169,7 +168,7 @@ canvas { display: block; }
 .legend b { color: var(--fg); font-weight: 600; }
 .hbar { height: 14px; background: rgba(124,111,155,0.18); position: relative; overflow: hidden;
   clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 100%, 7px 100%); }
-.hbar > div { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); transition: width 0.3s linear, background 0.3s; }
+.hbar > div { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; transform: scaleX(0); transform-origin: left; will-change: transform; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); transition: transform 0.3s linear, background 0.3s; }
 .hbar > div.warn { background: var(--yel); box-shadow: 0 0 10px var(--yel); }
 .hbar > div.danger { background: var(--red); box-shadow: 0 0 10px var(--red); }
 .disk-cap { display: flex; align-items: baseline; gap: 10px; margin-top: 8px; white-space: nowrap; }
@@ -333,6 +332,9 @@ canvas { display: block; }
 (() => {
 'use strict';
 const $ = id => document.getElementById(id);
+const FLAGS = Object.fromEntries(location.search.replace(/^\?/, '').split('&').filter(Boolean).map(kv => kv.split('=')).map(([k, v]) => [k, v ?? '1']));
+if (FLAGS.noanim) { const st = document.createElement('style'); st.textContent = '*, *::before, *::after { animation: none !important; transition: none !important; }'; document.head.appendChild(st); }
+const TWEEN_MS = FLAGS.notween ? 0 : 300;
 const C = { cyan: '#00F0FF', mag: '#FF2BD6', yel: '#F9F002', red: '#FF3B3B', dim: '#7C6F9B' };
 const HIST = 120;
 const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
@@ -366,7 +368,7 @@ function fitCanvas(cv) {
 
 /* ---------- tween registry ---------- */
 const tweens = new Map();   // key -> {from,to,t0,dur,cur}
-function setTarget(key, to, dur = 300) {
+function setTarget(key, to, dur = TWEEN_MS) {
   const t = tweens.get(key);
   if (!t) { tweens.set(key, { from: to, to, cur: to, t0: 0, dur }); return; }
   if (t.to === to) return;
@@ -393,6 +395,9 @@ function push(k, v) { const a = hist[k]; a.push(v); if (a.length > HIST) a.shift
 const gCpu = fitCanvas($('g-cpu')), gGpu = fitCanvas($('g-gpu')), gMem = fitCanvas($('g-mem'));
 const sGpu = fitCanvas($('s-gpu')), sDisk = fitCanvas($('s-disk')), sNet = fitCanvas($('s-net')), sMem = fitCanvas($('s-mem'));
 
+function glowStroke(ctx, color, width) {   // cheap glow: wide translucent stroke under the real one
+  ctx.save(); ctx.strokeStyle = color; ctx.globalAlpha = 0.28; ctx.lineWidth = width + 10; ctx.stroke(); ctx.restore();
+}
 function drawArc(g, pct, colA, colB) {
   const { ctx, w, h } = g; ctx.clearRect(0, 0, w, h);
   const cx = w / 2, cy = h / 2 + 6, r = 76, start = Math.PI * 0.75, span = Math.PI * 1.5;
@@ -409,13 +414,16 @@ function drawArc(g, pct, colA, colB) {
   const p = clamp(pct, 0, 100) / 100, end = start + span * p;
   const grad = ctx.createLinearGradient(cx - r, cy, cx + r, cy);
   grad.addColorStop(0, colA); grad.addColorStop(1, pct >= 85 ? C.red : colB);
-  ctx.save(); ctx.shadowColor = pct >= 85 ? C.red : colA; ctx.shadowBlur = 16;
-  ctx.lineCap = 'round'; ctx.lineWidth = 14; ctx.strokeStyle = grad;
-  if (p > 0.002) { ctx.beginPath(); ctx.arc(cx, cy, r, start, end); ctx.stroke(); }
-  ctx.restore();
+  ctx.lineCap = 'round'; ctx.lineWidth = 14;
+  if (p > 0.002) {
+    ctx.beginPath(); ctx.arc(cx, cy, r, start, end);
+    glowStroke(ctx, pct >= 85 ? C.red : colA, 14);
+    ctx.strokeStyle = grad; ctx.stroke();
+  }
   // needle dot
-  ctx.fillStyle = '#fff'; ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
-  ctx.beginPath(); ctx.arc(cx + Math.cos(end) * r, cy + Math.sin(end) * r, 4, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  ctx.beginPath(); ctx.arc(cx + Math.cos(end) * r, cy + Math.sin(end) * r, 5, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + Math.cos(end) * r, cy + Math.sin(end) * r, 3, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
 }
 
 function drawRing(g, segs, total) {
@@ -426,8 +434,8 @@ function drawRing(g, segs, total) {
   let a = -Math.PI / 2;
   for (const s of segs) {
     const span = Math.PI * 2 * clamp(s.v / total, 0, 1); if (span <= 0) continue;
-    ctx.save(); ctx.shadowColor = s.c; ctx.shadowBlur = 12; ctx.strokeStyle = s.c;
-    ctx.beginPath(); ctx.arc(cx, cy, r, a, a + span); ctx.stroke(); ctx.restore();
+    ctx.beginPath(); ctx.arc(cx, cy, r, a, a + span);
+    glowStroke(ctx, s.c, 16); ctx.strokeStyle = s.c; ctx.stroke();
     a += span;
   }
   ctx.strokeStyle = 'rgba(0,240,255,0.25)'; ctx.lineWidth = 1;
@@ -451,10 +459,11 @@ function drawArea(g, series, opts) {
     ctx.lineTo(x(n - 1), h); ctx.lineTo(x(0), h); ctx.closePath(); ctx.fillStyle = fill; ctx.fill();
     ctx.beginPath(); ctx.moveTo(x(0), y(d[0]));
     for (let i = 1; i < n; i++) ctx.lineTo(x(i), y(d[i]));
-    ctx.save(); ctx.strokeStyle = s.c; ctx.lineWidth = 2; ctx.shadowColor = s.c; ctx.shadowBlur = 8; ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle = s.c; ctx.globalAlpha = 0.25; ctx.lineWidth = 6; ctx.stroke(); ctx.restore();
+    ctx.strokeStyle = s.c; ctx.lineWidth = 2; ctx.stroke();
     // head dot
-    ctx.save(); ctx.fillStyle = '#fff'; ctx.shadowColor = s.c; ctx.shadowBlur = 10;
-    ctx.beginPath(); ctx.arc(x(n - 1), y(d[n - 1]), 3, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.beginPath(); ctx.arc(x(n - 1), y(d[n - 1]), 5, 0, Math.PI * 2); ctx.fillStyle = s.c + '66'; ctx.fill();
+    ctx.beginPath(); ctx.arc(x(n - 1), y(d[n - 1]), 3, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
   }
   if (opts.label) { ctx.fillStyle = C.dim; ctx.font = '16px ui-monospace, Menlo, monospace'; ctx.textAlign = 'right'; ctx.fillText(opts.label(max), w - 4, 16); }
 }
@@ -488,7 +497,7 @@ function applySnapshot(s) {
   // cores
   const cores = cpu.cores || [];
   if (coreEls.length !== cores.length) buildCores(cores.length, cpu.ecores || 0, cpu.ecoresFirst !== false);
-  cores.forEach((v, i) => { const el = coreEls[i]; el.style.height = clamp(v, 0, 100) + '%'; el.classList.toggle('hot', v >= 85); });
+  cores.forEach((v, i) => { const el = coreEls[i]; el.style.transform = `scaleY(${(clamp(v, 0, 100) / 100).toFixed(3)})`; el.classList.toggle('hot', v >= 85); });
   $('ecnt').textContent = cpu.ecores ?? '—'; $('pcnt').textContent = cpu.pcores ?? '—';
   const ld = host.load || [];
   $('cpu-load').textContent = ld.length ? 'load ' + ld.map(x => x.toFixed(2)).join('  ') : 'load —';
@@ -504,13 +513,13 @@ function applySnapshot(s) {
   $('mem-app').textContent = ((mem.app || 0) / GI).toFixed(1); $('mem-wired').textContent = ((mem.wired || 0) / GI).toFixed(1); $('mem-comp').textContent = ((mem.compressed || 0) / GI).toFixed(1);
   const swp = (mem.swapUsed || 0) / (mem.swapTotal || 1) * 100;
   $('mem-swap').textContent = mem.swapTotal ? `${((mem.swapUsed || 0) / GI).toFixed(1)}/${(mem.swapTotal / GI).toFixed(0)}G` : '0';
-  const sb = $('swap-bar'); sb.style.width = clamp(swp, 0, 100) + '%'; sb.className = swp >= 85 ? 'danger' : swp >= 60 ? 'warn' : '';
+  const sb = $('swap-bar'); sb.style.transform = `scaleX(${(clamp(swp, 0, 100) / 100).toFixed(3)})`; sb.className = swp >= 85 ? 'danger' : swp >= 60 ? 'warn' : '';
 
   // disk
   const dp = disk.total ? disk.used / disk.total * 100 : 0;
   $('disk-used').textContent = ((disk.used || 0) / 1e9).toFixed(0); $('disk-total').textContent = ((disk.total || 0) / 1e9).toFixed(0) + ' GB';
   $('disk-used').className = 'v ' + lvlClass(dp);
-  const db = $('disk-bar'); db.style.width = clamp(dp, 0, 100) + '%'; db.className = dp >= 90 ? 'danger' : dp >= 75 ? 'warn' : '';
+  const db = $('disk-bar'); db.style.transform = `scaleX(${(clamp(dp, 0, 100) / 100).toFixed(3)})`; db.className = dp >= 90 ? 'danger' : dp >= 75 ? 'warn' : '';
   const r = fmtRate(disk.readBps || 0), wv = fmtRate(disk.writeBps || 0);
   $('disk-r').textContent = `${r.v} ${r.u}`; $('disk-w').textContent = `${wv.v} ${wv.u}`;
 
@@ -538,6 +547,7 @@ function setAlert(id, p, warn = 60, danger = 85) {
 
 function render(now) {
   const active = stepTweens(now);
+  if (FLAGS.nocanvas) { dirty = false; return active; }
   const cpu = val('cpu'), gpu = val('gpu'), mem = val('mem');
   $('cpu-val').textContent = Math.round(cpu); $('cpu-val').parentElement.className = 'gauge-val big ' + lvlClass(cpu);
   $('gpu-val').textContent = Math.round(gpu); $('gpu-val').parentElement.className = 'gauge-val big ' + (gpu >= 85 ? 'c-red' : gpu >= 60 ? 'c-yel' : 'c-mag');
@@ -558,7 +568,7 @@ function render(now) {
 let rafId = 0, lastFrame = 0;
 function startRaf() { if (!rafOn) { rafOn = true; rafId = requestAnimationFrame(loop); } }
 function loop(now) {
-  if (now - lastFrame < 33) { rafId = requestAnimationFrame(loop); return; }   // cap 30 fps
+  if (now - lastFrame < 50) { rafId = requestAnimationFrame(loop); return; }   // cap 20 fps
   lastFrame = now;
   const active = render(now);
   if (active || dirty) rafId = requestAnimationFrame(loop); else rafOn = false;
@@ -566,15 +576,18 @@ function loop(now) {
 
 /* ---------- clock ---------- */
 const WD = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+let lastSec = -1;
 function tickClock() {
   const d = new Date();
+  if (d.getSeconds() === lastSec) return;
+  lastSec = d.getSeconds();
   const t = `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
   $('clock-t').textContent = t; $('clock-m').textContent = t; $('clock-c').textContent = t;
   $('date').textContent = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
   $('wd').textContent = WD[d.getDay()];
-  $('minbar').style.width = ((d.getSeconds() + d.getMilliseconds() / 1000) / 60 * 100).toFixed(2) + '%';
+  $('minbar').style.transform = `scaleX(${((d.getSeconds() + 1) / 60).toFixed(4)})`;
 }
-setInterval(tickClock, 200); tickClock();
+setInterval(tickClock, 100); tickClock();
 (function scheduleGlitch() {
   setTimeout(() => {
     const c = $('clock'); c.classList.remove('glitch'); void c.offsetWidth; c.classList.add('glitch');

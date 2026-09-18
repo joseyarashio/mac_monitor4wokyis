@@ -173,9 +173,25 @@ mockup/
 
 ## 8. 效能預算
 
-- App(含 WebKit 行程)CPU 平均 < 4% 單核心。採樣每秒一次;Canvas 只在資料更新與補間期間重畫。
+- 目標:App(含 WebKit 行程)CPU 平均 < 10% 單核心(整機 10 核約 1%)。採樣每秒一次;Canvas 只在資料更新與 300 ms 補間期間重畫,上限 20 fps。
 - 記憶體 < 180 MB(WebKit 佔大宗)。
-- 裝飾動畫只用 CSS transform / opacity。不用 `filter: blur` 動畫(GPU 昂貴)。
+- 裝飾動畫只用 CSS transform / opacity,timing 一律 `linear` / `ease`。
+
+實測(2026-09-18,主程序 + 3 個 WebKit 行程,15 秒平均,系統本身負載高所以有雜訊):
+
+| 版本 | 合計 CPU |
+|---|---|
+| 第一版(`height`/`width` 過渡、Canvas `shadowBlur`、`mix-blend-mode`) | 12.7% |
+| 把裝飾動畫改成 `steps()` | 21–22%(更糟) |
+| 關掉所有 CSS 動畫的對照組 | 8.7% |
+| 過渡改用 `transform: scale`,光暈改用寬半透明描邊,`steps()` 改回 `linear` | 8–10% |
+| 再關掉 Canvas 補間的對照組 | 4.8–6% |
+
+教訓:
+1. 會觸發 layout 的過渡(`height`、`width`)每秒跑 300 ms,是最大成本。改 `transform` 後歸零。
+2. WebKit 的 `steps()` 動畫不走合成器,比 `linear` 貴一倍以上。
+3. Canvas `shadowBlur` 很貴;用寬的半透明描邊當光暈,肉眼幾乎無差。
+4. 除錯用 `WOKYMON_UI_QUERY="noanim=1"`(或 `notween=1`、`nocanvas=1`)可逐項關閉功能做對照。
 
 ## 9. 建置、安裝、啟動
 
@@ -196,7 +212,7 @@ Scripts/install-agent.sh --uninstall   # bootout 並刪除 plist
 | 溫度私有 API 在 macOS 27 失效 | 無溫度 | 列第二階段,預設關閉 |
 | 螢幕拔插後 frame 錯位 | 畫面跑到別的螢幕 | 監聽螢幕變更通知重釘 |
 | 視窗 level 高於選單列造成該螢幕無法操作 | 該螢幕只能放這個 app | 可接受。提供 `--windowed` |
-| App 本身耗資源 | 違背監視器目的 | 效能預算 + `top -pid` 驗證 |
+| App 本身耗資源 | 違背監視器目的 | 效能預算 + `top` 驗證;`WOKYMON_UI_QUERY` 開關做對照實驗 |
 | 顯示器自動睡眠,面板變黑 | 監視器沒用 | `--keep-awake` 旗標,或在系統設定把顯示器睡眠設為「永不」 |
 | 崩潰迴圈 | CPU 與 log 洗版 | `SuccessfulExit=false` + `ThrottleInterval=10`;`--uninstall` 可一鍵移除 |
 | app 無回應 | 該螢幕卡住 | 從主螢幕終端機 `killall WokyMon`;LaunchAgent 會重啟 |
@@ -209,7 +225,7 @@ Scripts/install-agent.sh --uninstall   # bootout 並刪除 plist
 4. `./.build/release/WokyMon`:視窗出現在 Wokyis 螢幕,填滿 1280x720。
 5. 拔掉再接上 dock:視窗回到 Wokyis 螢幕。
 6. 跑 `yes > /dev/null &` 兩個:CPU 數值上升,對應核心變紅。與 Activity Monitor 比對誤差 < 5%。
-7. `top -pid $(pgrep WokyMon)` 加上 WebKit 子行程:CPU 合計 < 4%。
+7. `top` 對主程序與三個 WebKit 行程取 15 秒平均:CPU 合計 < 10%。(實測 8–10%,見第 8 節)
 8. 記憶體數值與 Activity Monitor「已使用記憶體」相差 < 0.3 GB。
 9. 讓顯示器睡眠再喚醒:面板繼續刷新,時鐘正確。
 10. `kill -9 $(pgrep WokyMon)`:LaunchAgent 在 10 秒內重啟;`launchctl bootout` 後不再重啟。
