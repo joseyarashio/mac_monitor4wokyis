@@ -2,6 +2,16 @@
 
 Mac mini M4 資源監視器,固定顯示在 Wokyis 5 吋外接螢幕(1280x720)。細節見 `DESIGN.md`。
 
+## 畫面
+
+實機截圖(2026-09-18,Mac mini M4,釘在 Wokyis 螢幕,預設非 overlay 模式,保留選單列):
+
+![WokyMon 儀表板](docs/screenshots/wokyis-dashboard.png)
+
+![WokyMon 儀表板,數秒後](docs/screenshots/wokyis-dashboard-2.png)
+
+由左至右、由上至下:時鐘與日期、CPU(總量 + E/P 每核心)、GPU(render/tiler、VRAM)、記憶體(app/compressed/wired/swap)、磁碟(用量與讀寫速度)、網路上下行、系統資訊。
+
 ## 建置
 
 ```
